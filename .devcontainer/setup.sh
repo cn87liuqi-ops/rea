@@ -18,8 +18,17 @@ if [ ! -f "$REA_JADX_MCP_JAR" ]; then
   curl -fL https://github.com/1013503897/jadx-headless-mcp/releases/download/v0.7.1/jadx-headless-mcp-0.7.1-all.jar -o "$REA_JADX_MCP_JAR"
 fi
 echo "6e5eacf500b64292bfb73c49797c1958f6ee44646e43e868039ae7feb573ff75  $REA_JADX_MCP_JAR" | sha256sum -c -
+export REA_APKTOOL_COMMAND=/usr/bin/apktool
+export REA_TSHARK_COMMAND=/usr/bin/tshark
+export REA_SIGROK_COMMAND=/usr/bin/sigrok-cli
+if ! command -v google-chrome >/dev/null; then
+  curl -fL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -o /tmp/rea-google-chrome.deb
+  sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y /tmp/rea-google-chrome.deb
+fi
+export REA_BROWSER_EXECUTABLE=/usr/bin/google-chrome
 mkdir -p "$HOME/.config/rea"
 printf 'export GHIDRA_INSTALL_DIR="%s"\nexport REA_JADX_MCP_JAR="%s"\n' "$GHIDRA_INSTALL_DIR" "$REA_JADX_MCP_JAR" > "$HOME/.config/rea/environment.sh"
+printf '%s\n' 'export REA_APKTOOL_COMMAND=/usr/bin/apktool' 'export REA_TSHARK_COMMAND=/usr/bin/tshark' 'export REA_SIGROK_COMMAND=/usr/bin/sigrok-cli' 'export REA_BROWSER_EXECUTABLE=/usr/bin/google-chrome' >> "$HOME/.config/rea/environment.sh"
 if ! grep -q '.config/rea/environment.sh' "$HOME/.bashrc"; then
   echo 'source "$HOME/.config/rea/environment.sh"' >> "$HOME/.bashrc"
 fi
